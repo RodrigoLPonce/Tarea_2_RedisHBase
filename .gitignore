@@ -1,0 +1,18 @@
+# entorno y cachés
+venv/
+.venv/
+__pycache__/
+*.pyc
+# datos (se generan con la semilla; nunca se versionan)
+datos/
+*.parquet
+*.rdb
+*.aof
+appendonlydir/
+redis_data/
+hbase_data/
+# secretos
+.env
+*.key
+# respaldo local de la versión anterior
+_original/

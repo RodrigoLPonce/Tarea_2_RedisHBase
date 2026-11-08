@@ -1,0 +1,6 @@
+# Solo para el experimento D.2: la configuración CONTRARIA a la elegida.
+# Sin AOF y sin RDB; --dir /tmp evita que cargue un dump.rdb viejo que haya en el volumen.
+#   docker compose -f docker-compose.yml -f docker-compose.sin-persistencia.yml up -d --wait redis
+services:
+  redis:
+    command: ["redis-server", "--appendonly", "no", "--save", "", "--dir", "/tmp"]

@@ -1,0 +1,36 @@
+services:
+  redis:
+    image: redis:7
+    # Persistencia elegida (ver README): AOF con fsync cada segundo, sin snapshots RDB.
+    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec", "--save", ""]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  hbase:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"    # Thrift (happybase)
+      - "16010:16010"  # UI del Master + JMX
+    volumes:
+      - pmd-hbase:/data
+    healthcheck:
+      # sano = el Master responde Y el Thrift (lo que usa happybase) acepta conexiones
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/127.0.0.1/9090' && echo status | hbase shell -n > /dev/null 2>&1"]
+      interval: 10s
+      timeout: 60s
+      retries: 30
+      start_period: 30s
+
+volumes:
+  redis_data:
+  pmd-hbase:
+    name: pmd-hbase
